@@ -19,7 +19,7 @@ def health():
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
-    file = request.files['file']
+    file = request.files['image']
     if file:
         s3.upload_fileobj(file, con.BUCKET_NAME, file.filename)
         return Response("upload successfully", status=200)
