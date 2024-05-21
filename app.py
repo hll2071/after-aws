@@ -21,8 +21,9 @@ def health():
 def upload_image():
     file = request.files['image']
     if file:
-        s3.upload_fileobj(file, con.BUCKET_NAME, file.filename)
-        return Response("upload successfully", status=200)
+       # upload_fileobj(파일자체, 버킷이름, s3키값)
+        s3.upload_fileobj(file, con.BUCKET_NAME, 'image/{}'.format(file.filename))
+        return Response("upload success", status=200)
     return Response("No file", status=404)
 
 if __name__ == '__main__':
