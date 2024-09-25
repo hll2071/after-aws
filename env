@@ -1,0 +1,8 @@
+.env 파일 생성하고 아래 내용 추가
+DB_HOST=[DB 엔드포인트]
+DB_USER=[DB 계정]
+DB_PASSWORD=[DB 계정의 비밀번호]
+DB_SCHEMA=[데이터베이스 이름 여기선 webapp]
+AWS_ACCESS_KEY=[s3 엑세스 키]
+AWS_SECRET_KEY=[s3 시크릿 키]
+BUCKET_NAME=[s3 버킷 이름]
