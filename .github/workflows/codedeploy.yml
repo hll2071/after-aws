@@ -40,8 +40,11 @@ jobs:
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::500933065604:role/s3full+deployfull
-          aws-region: ${{ env.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_PRIVATE_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+          #role-to-assume: arn:aws:iam::500933065604:role/s3full+deployfull
+          #aws-region: ${{ env.AWS_REGION }}
 
       - name: Upload to S3
         run: aws s3 cp ${{ env.PACKAGE }} s3://${{ env.S3_BUCKET }}/${{ env.PACKAGE }}
