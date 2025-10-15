@@ -11,7 +11,7 @@ con = config.Config()
 
 @app.route('/')
 def index():
-    return 'hello AWS world / .env 테스트 : {}'.format(con.DB_SCHEMA)
+    return 'hi AWS world / .env 테스트 : {}'.format(con.DB_SCHEMA)
 
 @app.route('/health')
 def health():
