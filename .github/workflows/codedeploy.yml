@@ -11,7 +11,7 @@ permissions:
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET: bssm-flask-artifacts
-  APP_NAME: flaskapp
+  APP_NAME: cicd-test
   DEPLOY_GROUP: flaskapp-prod
   PACKAGE: flaskapp-${{ github.sha }}.zip
 
