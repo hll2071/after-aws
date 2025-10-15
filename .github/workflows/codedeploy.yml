@@ -1,0 +1,54 @@
+name: CI/CD to EC2 via CodeDeploy
+
+on:
+  push: { branches: [ "main" ] }
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET: bssm-flask-artifacts
+  APP_NAME: flaskapp
+  DEPLOY_GROUP: flaskapp-prod
+  PACKAGE: flaskapp-${{ github.sha }}.zip
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+
+      - name: (optional) quick check
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+          # pytest/ruff 등을 원하면 여기서 실행
+
+      - name: Make artifact
+        run: |
+          mkdir -p artifact/scripts
+          cp app.py config.py requirements.txt appspec.yml artifact/
+          cp -a scripts/. artifact/scripts/
+          cd artifact && zip -r ../${{ env.PACKAGE }} . && cd ..
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-actions-codedeploy-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload to S3
+        run: aws s3 cp ${{ env.PACKAGE }} s3://${{ env.S3_BUCKET }}/${{ env.PACKAGE }}
+
+      - name: Trigger CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.APP_NAME }} \
+            --deployment-group-name ${{ env.DEPLOY_GROUP }} \
+            --s3-location bucket=${{ env.S3_BUCKET }},key=${{ env.PACKAGE }},bundleType=zip
